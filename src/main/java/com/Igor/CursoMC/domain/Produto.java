@@ -9,28 +9,33 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
-//clase categoria 
-//mapeamento JPA
-
-@Entity 
-public class Categoria implements Serializable{
-	
+@Entity
+public class Produto implements Serializable{
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	private String nome;
-	//mapeamneto do lado da outr chave
-	@ManyToMany(mappedBy = "categorias")
-	List<Produto> produto = new ArrayList<>();
-	public Categoria() {}
+	private Double preco;
+	//mapeamnetos JPA(n para n)
+	@ManyToMany
+	@JoinTable(name="PRODUTO_CATEGORIA",
+	joinColumns = @JoinColumn (name="produto_id"),
+	inverseJoinColumns = @JoinColumn(name="categoria_id"))
+	List<Categoria> categorias = new ArrayList<>();
+	
+	public Produto() {}
 
-	public Categoria(Integer id, String nome) {
-		
+	public Produto(Integer id, String nome, Double preco) {
+	
 		this.id = id;
 		this.nome = nome;
+		this.preco = preco;
 	}
 
 	public Integer getId() {
@@ -49,18 +54,25 @@ public class Categoria implements Serializable{
 		this.nome = nome;
 	}
 
+	public Double getPreco() {
+		return preco;
+	}
+
+	public void setPreco(Double preco) {
+		this.preco = preco;
+	}
+
+	public List<Categoria> getCategoria() {
+		return categorias;
+	}
+
+	public void setCategoria(List<Categoria> categoria) {
+		this.categorias = categoria;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
-	}
-	
-
-	public List<Produto> getProduto() {
-		return produto;
-	}
-
-	public void setProduto(List<Produto> produto) {
-		this.produto = produto;
 	}
 
 	@Override
@@ -71,10 +83,9 @@ public class Categoria implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Categoria other = (Categoria) obj;
+		Produto other = (Produto) obj;
 		return Objects.equals(id, other.id);
 	}
 	
 	
-
 }
